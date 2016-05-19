@@ -3,7 +3,13 @@ pix
 
 business contacts matching
 
-[![Build Status](https://travis-ci.org/mateuszdargacz/Django-template-1.9.png)](https://travis-ci.org/mateuszdargacz/Django-template-1.9/)
+.. image:: https://travis-ci.org/mateuszdargacz/Django-template-1.9.png
+     :target: https://travis-ci.org/mateuszdargacz/Django-template-1.9/
+     :alt: Build Status
+
+
+
+
 
 
 Settings
