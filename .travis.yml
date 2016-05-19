@@ -1,12 +1,27 @@
-sudo: true
-before_install:
-  - sudo apt-get update -qq
-  - sudo apt-get install -qq build-essential gettext python-dev zlib1g-dev libpq-dev xvfb
-  - sudo apt-get install -qq libtiff4-dev libjpeg8-dev libfreetype6-dev liblcms1-dev libwebp-dev
-  - sudo apt-get install -qq graphviz-dev python-setuptools python3-dev python-virtualenv python-pip
-  - sudo apt-get install -qq firefox automake libtool libreadline6 libreadline6-dev libreadline-dev
-  - sudo apt-get install -qq libsqlite3-dev libxml2 libxml2-dev libssl-dev libbz2-dev wget curl llvm
-language: python
-python:
-- "3.5"
+ sudo: required
 
+ services:
+   - docker
+
+ env:
+   DOCKER_COMPOSE_VERSION: 1.6.2
+
+ before_install:
+   - sudo apt-get purge -y docker-engine
+   - sudo apt-get update
+   - sudo apt-get install -y docker-engine
+   - sudo rm /usr/local/bin/docker-compose
+   - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
+   - chmod +x docker-compose
+   - sudo mv docker-compose /usr/local/bin
+   - curl -fsSL https://raw.githubusercontent.com/CWSpear/local-persist/master/scripts/install.sh | sudo bash -s -- --upstart
+
+ install:
+   - docker-compose build
+   - docker-compose up -d
+   - docker ps
+   - docker-compose ps
+   - docker-compose run web python manage.py migrate
+
+ script:
+   - docker-compose run web python manage.py test -v 2 polls
