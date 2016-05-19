@@ -1,0 +1,61 @@
+version: '2'
+
+volumes:
+  postgres_data: {}
+  postgres_backup: {}
+
+services:
+  postgres:
+    build: ./compose/postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - postgres_backup:/backups
+    env_file: .env
+
+  django:
+    build:
+      context: .
+      dockerfile: ./compose/django/Dockerfile-dev
+    user: django
+    depends_on:
+      - postgres
+      - redis
+    ports:
+      - "0.0.0.0:8000:8000"
+#    command: /gunicorn.sh
+    command: ./manage.py runserver 0.0.0.0:8000
+    env_file: .env
+
+#  nginx:
+#    build: ./compose/nginx
+#    depends_on:
+#      - django
+#    ports:
+#      - "0.0.0.0:80:80"
+
+  redis:
+    image: redis:3.0
+
+  celeryworker:
+    build:
+      context: .
+      dockerfile: ./compose/django/Dockerfile-dev
+    user: django
+    env_file: .env
+    depends_on:
+     - postgres
+     - redis
+    command: celery -A pix.taskapp worker -l INFO
+
+  celerybeat:
+    build:
+      context: .
+      dockerfile: ./compose/django/Dockerfile-dev
+    user: django
+    env_file: .env
+    depends_on:
+      - postgres
+      - redis
+    command: celery -A pix.taskapp beat -l INFO
+
+
