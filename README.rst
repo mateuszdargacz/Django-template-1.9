@@ -88,6 +88,30 @@ Deployment
 
 Docker
 ^^^^^^
+Dependencies
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+- docker
+- docker-machine
+- docker-compose
+
+Running Project
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+::
+
+  docker-machine create --driver virtualbox pix
+  docker-machine start pix
+  eval "$(docker-machine env pix)"
+  docker-compose build
+  docker-compose up
+
+Utilities
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+::
+
+  docker-machine ssh pix              # enter virtual machine environment
+  docker exec -it container_name bash # enter container environment
+  docker-machine ip pix               # show virtualmachine ip address
+
 
 See detailed `cookiecutter-django Docker documentation`_.
 
